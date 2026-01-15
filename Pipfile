@@ -7,13 +7,13 @@ name = "pypi"
 django-allauth = "==0.54.0"
 gunicorn = "==20.1.0"
 django-cors-headers = "*"
-django-jazzmin = "*"
 django = "*"
 python-decouple = "*"
 django-cleanup = "*"
 django-crispy-forms = "*"
 django-ckeditor = "*"
 pillow = "*"
+django-jazzmin = "*"
 
 [dev-packages]
 
