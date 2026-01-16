@@ -15,15 +15,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('MY_SECRET_KEY')
 DEBUG = True
 
-MAIN_DOMAIN = config('MAIN_DOMAIN', default='localhost')
 
-ALLOWED_HOSTS = ["*"]
+MAIN_DOMAIN = config("MAIN_DOMAIN", default="kunooz.deplois.net").replace("https://", "").replace("http://", "")
 
-CORS_ORIGIN_WHITELIST = ["*"]
+ALLOWED_HOSTS = [
+    MAIN_DOMAIN,
+    f"www.{MAIN_DOMAIN}",
+]
+
 
 CSRF_TRUSTED_ORIGINS = [
     f"{MAIN_DOMAIN}",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{MAIN_DOMAIN}",
+    f"https://www.{MAIN_DOMAIN}",
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 
 # Application definition
@@ -58,6 +69,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
+
 
 ROOT_URLCONF = 'kunooz.urls'
 
