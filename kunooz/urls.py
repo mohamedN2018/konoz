@@ -5,6 +5,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 
 from django.contrib.sitemaps.views import sitemap
 from core.sitemaps import PostSitemap
@@ -16,6 +17,7 @@ sitemaps = {
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}),
+    path("google6dc94822b91e8a80.html", TemplateView.as_view(template_name="google6dc94822b91e8a80.html", content_type="text/html")),
 
     # صفحات المصادقة
     path('login/', auth_views.LoginView.as_view(template_name='auth/login.html'), name='login'),
