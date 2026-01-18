@@ -23,7 +23,7 @@ urlpatterns = [
     
     # تطبيق core
     path('', include('core.urls')),
-    
+    path('analytics/', include('analytics.urls')),
     path('ads/', include('advertisements.urls')),
 
 ]

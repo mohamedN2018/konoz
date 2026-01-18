@@ -673,6 +673,14 @@
                 <a href="{% url 'dashboard' %}" class="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 border-b border-gray-100 dark:border-gray-700">
                     <i class="fas fa-tachometer-alt ml-2"></i> لوحة التحكم
                 </a>
+                {% if user.is_superuser %}
+                <a href="{% url 'control_dashboard' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
+                    <i class="fas fa-tachometer-alt ml-2"></i> للوحة التحكم الرئسية  
+                </a>
+                {% endif %}
+                 <a href="{% url 'analytics_dashboard' %}" class="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 border-b border-gray-100 dark:border-gray-700">
+                    <i class="fas fa-tachometer-alt ml-2"></i> لوحة التحليلات 
+                </a>
                 <a href="{% url 'profile' %}" class="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 border-b border-gray-100 dark:border-gray-700">
                     <i class="fas fa-user ml-2"></i> الملف الشخصي
                 </a>
@@ -770,6 +778,11 @@
                                 <i class="fas fa-tachometer-alt ml-2"></i> للوحة التحكم الرئسية  
                             </a>
                             {% endif %}
+
+                            <a href="{% url 'analytics_dashboard' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-user ml-2"></i> لوحة التحليلات
+                            </a>
+
                             <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
                                 <i class="fas fa-user ml-2"></i> الملف الشخصي
                             </a>

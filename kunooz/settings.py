@@ -62,11 +62,28 @@ INSTALLED_APPS = [
     'adminsortable2',
     'crispy_forms',
     'ckeditor',
-    
+    'django_user_agents',  # تحليل user agents
+    'django.contrib.humanize',  # إضافة هذا
+
     'core',
     'advertisements',
+    'analytics',  # تطبيق التحليلات
+
 ]
 SITE_ID = 1
+
+
+# إعدادات User Agents
+USER_AGENTS_CACHE = 'default'
+
+# إعدادات التحليلات
+ANALYTICS_SETTINGS = {
+    'ENABLE_TRACKING': True,
+    'STORE_USER_DATA': True,
+    'ANONYMIZE_IP': True,
+    'COOKIE_DURATION': 365,  # أيام
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,7 +93,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'django_user_agents.middleware.UserAgentMiddleware',  # تحليل user agents
+    'analytics.middleware.AdvancedAnalyticsMiddleware',  # التحليلات المبسطة
 ]
 
 
