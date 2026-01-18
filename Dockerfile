@@ -31,6 +31,7 @@ RUN pip3 install -r requirements.txt
 
 # create static dir
 RUN mkdir -p /usr/src/app/static/ && chmod 755 /usr/src/app/static/
+RUN mkdir -p /s3files
 
 # expose port
 EXPOSE 8000
