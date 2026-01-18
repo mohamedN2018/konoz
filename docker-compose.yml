@@ -12,6 +12,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_HOST: kunooz-db
       DB_PORT: 5432
+    command: gunicorn --chdir /usr/src/app --timeout 320 --workers 25 --access-logfile /dev/stdout --error-logfile /dev/stderr --bind :80 kunooz.wsgi:application
     depends_on:
       - kunooz-db
 
