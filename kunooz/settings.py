@@ -12,8 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # BASE & SECURITY
 # =========================
 
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', cast=bool)
+SECRET_KEY = config('MY_SECRET_KEY')
+DEBUG = True
 
 
 MAIN_DOMAIN = config("MAIN_DOMAIN", default="kunooz.deplois.net").replace("https://", "").replace("http://", "")
