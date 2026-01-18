@@ -640,7 +640,11 @@
         <div class="flex justify-between items-center mb-6">
             <div class="flex items-center space-x-2 space-x-reverse">
                 <a href="{% url 'home' %}" class="flex items-center gap-2">
+                {% if url_media and url_media.site_logo %}
+                    <img src="{{ url_media.site_logo.url }}" class="h-12" alt="الشعار">
+                {% else %}
                     <img src="{% static 'images/logo.png' %}" class="h-12" alt="الشعار">
+                {% endif %}
                 </a>
             </div>
             <button class="text-gray-700 dark:text-gray-300 text-2xl" id="closeMobileMenu">
@@ -688,9 +692,9 @@
                     <a href="{% url 'login' %}" class="block text-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium py-2 border border-gray-300 dark:border-gray-700 rounded-lg">
                         <i class="fas fa-sign-in-alt ml-2"></i> تسجيل الدخول
                     </a>
-                    <a href="{% url 'register' %}" class="block text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg hover:opacity-90 font-medium" onclick="gtag('event','conversion')">
+                    {% comment %} <a href="{% url 'register' %}" class="block text-center bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg hover:opacity-90 font-medium" onclick="gtag('event','conversion')">
                         <i class="fas fa-user-plus ml-2"></i> إنشاء حساب
-                    </a>
+                    </a> {% endcomment %}
                 </div>
             {% endif %}
         </div>
@@ -703,7 +707,11 @@
                 <!-- الشعار -->
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <a href="{% url 'home' %}" class="flex items-center gap-2">
-                        <img src="{% static 'images/logo.png' %}" class="h-16 logo-img" alt="الشعار">
+                        {% if url_media and url_media.site_logo %}
+                            <img src="{{ url_media.site_logo.url }}" class="h-16" alt="الشعار">
+                        {% else %}
+                            <img src="{% static 'images/logo.png' %}" class="h-16" alt="الشعار">
+                        {% endif %}
                     </a>
                 </div>
                 
@@ -793,10 +801,10 @@
                         <i class="fas fa-sign-in-alt ml-1"></i> تسجيل الدخول
                     </a>
 
-                    <a href="{% url 'register' %}" onclick="gtag('event','conversion')"
+                    {% comment %} <a href="{% url 'register' %}" onclick="gtag('event','conversion')"
                     class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg hover:opacity-90 transition">
                         <i class="fas fa-user-plus ml-1"></i> إنشاء حساب
-                    </a>
+                    </a> {% endcomment %}
                     {% endif %}
                 </div>
             </div>
@@ -864,11 +872,15 @@
                 <div class="footer-section">
                     <div class="flex items-center space-x-2 space-x-reverse mb-4">
                         <a href="{% url 'home' %}" class="flex items-center gap-2">
-                             <img src="{% static 'images/logo.png' %}" class="h-16" alt="الشعار">
+                        {% if url_media and url_media.site_logo %}
+                            <img src="{{ url_media.site_logo.url }}" class="h-16" alt="الشعار">
+                        {% else %}
+                            <img src="{% static 'images/logo.png' %}" class="h-16" alt="الشعار">
+                        {% endif %}
                         </a>
                     </div>
                     <p class="text-gray-300">
-                        منصة تعليمية عربية شاملة تقدم كورسات، مقالات، منح تدريبية، كتب وملخصات لمساعدة الطلاب والباحثين.
+                        {{ url_media.site_description }}
                     </p>
                 </div>
                 
@@ -1576,7 +1588,6 @@
         document.head.appendChild(style);
     </script>
  
-    
     {% comment %} home eficts {% endcomment %}
     <script>
         document.addEventListener("DOMContentLoaded", function() {

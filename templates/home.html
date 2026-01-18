@@ -103,20 +103,21 @@
 {% block content %}
     <section class="relative hero-gradient text-white min-h-[60vh] flex items-center dark:bg-gray-900 dark:text-gray-100 section-animate animate-card transition-colors duration-300">
             <div class="absolute inset-0 overflow-hidden">
-                <img id="hero-bg"
-                    src="{% static 'images/back-hero2.png' %}"
-                    class="w-full h-full object-cover opacity-50 scale-100 transition-transform duration-300 ease-out"
-                    alt="Hero Background">
-            </div>
+                {% if hero_sections and hero_sections.background_image %}
+                    <img id="hero-bg" src="{{ hero_sections.background_image.url }}" class="w-full h-full object-cover opacity-50 scale-100 transition-transform duration-300 ease-out" alt="Hero Background">
+                {% else %}
+                    <img id="hero-bg" src="{% static 'images/back-hero2.png' %}" class="w-full h-full object-cover opacity-50 scale-100 transition-transform duration-300 ease-out" alt="Hero Background">
+                {% endif %}
+                </div>
             <!-- Dark overlay for better readability -->
             <div class="absolute inset-0 bg-black/40 dark:bg-gray-900/70 transition-colors duration-300"></div>
             <!-- Content -->
             <div class="relative z-10 container mx-auto px-4 text-center">
                 <h1 class="text-4xl md:text-6xl font-bold mb-6 animate__animated animate__fadeIn ">
-                    منصة التعليم العربية الشاملة
+                    {{ hero_sections.title|default:"منصة التعليم العربية الشاملة" }}
                 </h1>
                 <p class="text-xl md:text-2xl mb-8 opacity-90 dark:opacity-80 transition-colors duration-300 ">
-                    اكتشف عالم المعرفة مع كورسات، مقالات، منح تدريبية، كتب وملخصات
+                    {{ hero_sections.subtitle|default:"اكتشف عالم المعرفة مع كورسات، مقالات، منح تدريبية، كتب وملخصات" }}
                 </p>
                 <div class="flex flex-wrap justify-center gap-4">
                     <a href="{% url 'courses' %}" class="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300">

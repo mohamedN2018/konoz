@@ -65,6 +65,7 @@ def home(request):
     ).order_by('-publish_date')[:6]
 
     url_media = SiteSettings.objects.first()
+    hero_sections = heroSection.objects.first()
 
     return render(request, 'home.html', {
         'courses_posts': courses_posts,
@@ -72,6 +73,7 @@ def home(request):
         'grants_posts': grants_posts,
         'books_posts': books_posts,
         'url_media': url_media,
+        'hero_sections': hero_sections,
     })
 
 
@@ -310,8 +312,6 @@ def grants(request):
         'current_sort': sort_by,
     })
 
-
-
 # ======== تفاصيل المنشور ========
 def post_detail(request, slug):
     """عرض منشور معين"""
@@ -322,9 +322,6 @@ def post_detail(request, slug):
     
     # الحصول على التعليقات المعتمدة فقط
     comments = post.comments.filter(is_approved=True)
-    
-    # الحصول على البلوكات الخاصة بالمنشور
-    post_blocks = post.blocks.all().order_by('order')
     
     # معالجة نموذج التعليق
     if request.method == 'POST' and 'comment_form' in request.POST:
@@ -357,7 +354,6 @@ def post_detail(request, slug):
         'comments': comments,
         'comment_form': comment_form,
         'similar_posts': similar_posts,
-        'post_blocks': post_blocks,
     })
 
 
@@ -367,17 +363,9 @@ def post_detail(request, slug):
 def create_post(request):
     """إنشاء منشور جديد"""
     if request.method == 'POST':
-        print("📋 POST DATA:")
-        for key, value in request.POST.items():
-            print(f"  {key}: {value}")
-        print("\n📁 FILES:")
-        for key, file in request.FILES.items():
-            print(f"  {key}: {file.name} ({file.size} bytes)")
-        
         form = PostForm(request.POST, request.FILES)
         
         if form.is_valid():
-            print("✅ Form is valid")
             try:
                 with transaction.atomic():
                     post = form.save(commit=False)
@@ -394,15 +382,6 @@ def create_post(request):
                     # حفظ المنشور
                     post.save()
                     
-                    # معالجة البلوكات إذا كانت موجودة
-                    blocks_data_str = request.POST.get('blocks_data', '[]')
-                    try:
-                        blocks_data = json.loads(blocks_data_str)
-                        if blocks_data:
-                            create_post_blocks(post, blocks_data, request.FILES)
-                    except json.JSONDecodeError as e:
-                        print(f"⚠️ Blocks data error: {e}")
-                    
                     messages.success(request, f'تم {"نشر" if post.status == Post.Status.PUBLISHED else "حفظ"} المنشور "{post.title}" بنجاح!')
                     
                     # إعادة التوجيه
@@ -413,17 +392,8 @@ def create_post(request):
                         
             except Exception as e:
                 messages.error(request, f'حدث خطأ أثناء حفظ المنشور: {str(e)}')
-                print(f"❌ Error saving post: {e}")
         else:
             messages.error(request, 'يرجى تصحيح الأخطاء في النموذج')
-            print("❌ Form is invalid")
-            print("📝 Form errors:", form.errors)
-            
-            # طباعة تفصيلية لكل حقل
-            print("\n🔍 Detailed field errors:")
-            for field in form:
-                if field.errors:
-                    print(f"  Field '{field.name}': {field.errors}")
     else:
         # تهيئة القيم الافتراضية
         initial_data = {
@@ -442,43 +412,11 @@ def create_post(request):
     })
 
 
-def create_post_blocks(post, blocks_data, files):
-    """إنشاء وإدارة بلوكات المحتوى"""
-    existing_blocks = {b.order: b for b in post.blocks.all()}
-
-    for i, block_data in enumerate(blocks_data):
-        block_type = block_data.get('type', 'text')
-        text_content = block_data.get('text', '')
-
-        # إذا كان البلوك موجوداً، قم بتحديثه
-        if i in existing_blocks:
-            post_block = existing_blocks[i]
-            post_block.block_type = block_type
-        else:
-            # إنشاء بلوك جديد
-            post_block = PostBlock(post=post, order=i, block_type=block_type)
-
-        if block_type == 'text':
-            post_block.text = text_content
-        elif block_type == 'image':
-            image_name = block_data.get('image_name', '')
-            if image_name:
-                for file_key in files:
-                    file = files[file_key]
-                    if hasattr(file, 'name') and file.name == image_name:
-                        post_block.image = file
-                        break
-
-        post_block.save()
-
-    return True
-
 @login_required
 @user_passes_test(is_content_editor)
 def edit_post(request, id):
     """تعديل منشور موجود"""
     post = get_object_or_404(Post, id=id)
-    post_blocks = post.blocks.all().order_by('order')
     categories = Category.objects.all()
 
     # التحقق من صلاحية المستخدم
@@ -504,39 +442,6 @@ def edit_post(request, id):
                     # حفظ التغييرات
                     post.save()
                     
-                    # معالجة البلوكات
-                    blocks_data_str = request.POST.get('blocks_data', '[]')
-                    try:
-                        blocks_data = json.loads(blocks_data_str)
-                        
-                        # حذف البلوكات القديمة
-                        post.blocks.all().delete()
-                        
-                        # إنشاء البلوكات الجديدة
-                        for i, block_data in enumerate(blocks_data):
-                            post_block = PostBlock(
-                                post=post,
-                                block_type=block_data.get('type', 'text'),
-                                order=i
-                            )
-                            
-                            if block_data['type'] == 'text':
-                                post_block.text = block_data.get('text', '')
-                            elif block_data['type'] == 'image':
-                                # معالجة الصور من خلال حقل مخفي
-                                image_name = block_data.get('image_name', '')
-                                if image_name:
-                                    # البحث عن الملف المرفق بالاسم
-                                    for file_key in request.FILES:
-                                        if request.FILES[file_key].name == image_name:
-                                            post_block.image = request.FILES[file_key]
-                                            break
-                            
-                            post_block.save()
-                            
-                    except (json.JSONDecodeError, KeyError) as e:
-                        print(f"Error processing blocks: {e}")
-                    
                     messages.success(request, f'تم تحديث المنشور "{post.title}" بنجاح!')
                     
                     # إعادة التوجيه حسب الحالة
@@ -547,18 +452,15 @@ def edit_post(request, id):
                         
             except Exception as e:
                 messages.error(request, f'حدث خطأ أثناء تحديث المنشور: {str(e)}')
-                print(f"Error: {e}")
     else:
         form = PostForm(instance=post)
     
     return render(request, 'edit_post.html', {
         'form': form,
         'post': post,
-        'post_blocks': post_blocks,
         'post_statuses': Post.Status.choices,
         'categories': categories,
     })
-
 
 @login_required
 def delete_post(request, id):

@@ -356,8 +356,7 @@ class PostForm(forms.ModelForm):
         self.fields['excerpt'].error_messages = {
             'max_length': 'الملخص لا يمكن أن يتجاوز 300 حرف.'
         }
-
-
+      
 # ======== فورم التعليقات ========
 @auto_style_form
 class CommentForm(forms.ModelForm):

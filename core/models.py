@@ -12,6 +12,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import datetime
 from ckeditor.fields import RichTextField
+from django.core.exceptions import ValidationError
 
 
 class Category(models.Model):
@@ -148,26 +149,6 @@ class Post(models.Model):
         return self.featured_image or self.image
 
 
-class PostBlock(models.Model):
-    class BlockType(models.TextChoices):
-        TEXT = 'text', _('نص')
-        IMAGE = 'image', _('صورة')
-
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='blocks', verbose_name=_("المنشور"))
-    block_type = models.CharField(max_length=10, choices=BlockType.choices, verbose_name=_("نوع البلوك"))
-    text = RichTextField(blank=True, null=True, verbose_name=_("النص"))
-    image = models.ImageField(upload_to='blog/blocks/%Y/%m/', blank=True, null=True, verbose_name=_("الصورة"))
-    order = models.PositiveIntegerField(default=0, verbose_name=_("الترتيب"))
-
-    class Meta:
-        ordering = ['order']
-        verbose_name = _("بلوك المحتوى")
-        verbose_name_plural = _("بلوكات المحتوى")
-
-    def __str__(self):
-        return f"{self.post.title} - {self.get_block_type_display()} ({self.order})"
-
-
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', verbose_name="المنشور")
     name = models.CharField(max_length=100, verbose_name="الاسم")
@@ -186,7 +167,6 @@ class Comment(models.Model):
 
 
 class SiteSettings(models.Model):
-    """إعدادات الموقع"""
     site_name = models.CharField(max_length=200, default='موقع التعليم', verbose_name="اسم الموقع")
     site_description = models.TextField(blank=True, null=True, verbose_name="وصف الموقع")
     site_logo = models.ImageField(upload_to='site/', blank=True, null=True, verbose_name="شعار الموقع")
@@ -202,7 +182,6 @@ class SiteSettings(models.Model):
     
     # وسائل التواصل الاجتماعي
     facebook_url = models.URLField(blank=True, null=True, verbose_name="رابط الفيسبوك")
-    twitter_url = models.URLField(blank=True, null=True, verbose_name="رابط تويتر")
     instagram_url = models.URLField(blank=True, null=True, verbose_name="رابط إنستغرام")
     youtube_url = models.URLField(blank=True, null=True, verbose_name="رابط يوتيوب")
     
@@ -216,6 +195,18 @@ class SiteSettings(models.Model):
     class Meta:
         verbose_name = 'إعدادات الموقع'
         verbose_name_plural = 'إعدادات الموقع'
+
+class heroSection(models.Model):
+    title = models.CharField(max_length=200, verbose_name="العنوان")
+    subtitle = models.CharField(max_length=300, blank=True, verbose_name="العنوان الفرعي")
+    background_image = models.ImageField(upload_to='site/hero/', blank=True, null=True, verbose_name="صورة الخلفية")
+    
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        verbose_name = 'hero قسم'
+        verbose_name_plural = 'hero قسم'
 
 
 class SystemLog(models.Model):
